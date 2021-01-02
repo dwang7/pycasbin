@@ -161,8 +161,8 @@ class CoreEnforcer:
         self.model.print_policy()
         if self.auto_build_role_links:
             self.build_role_links()
-    
-    def load_increment_filtered_policy(self,filter):
+
+    def load_increment_filtered_policy(self, filter):
         """LoadIncrementalFilteredPolicy append a filtered policy from file/database."""
         if not hasattr(self.adapter, "is_filtered"):
             raise ValueError("filtered policies are not supported by this adapter")
@@ -210,6 +210,12 @@ class CoreEnforcer:
         """manually rebuild the role inheritance relations."""
 
         self.rm.clear()
+
+        sec = key = "d"
+
+        if sec in self.model.model.keys():
+            self.rm.add_domain_groups(self.model.model[sec][key].policy)
+
         self.model.build_role_links(self.rm)
 
     def enforce(self, *rvals):
@@ -241,7 +247,7 @@ class CoreEnforcer:
 
         exp_string = self.model.model["m"]["m"].value
         has_eval = util.has_eval(exp_string)
-        if not has_eval:        
+        if not has_eval:
             expression = self._get_expression(exp_string, functions)
 
         policy_effects = set()

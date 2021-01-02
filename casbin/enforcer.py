@@ -227,3 +227,26 @@ class Enforcer(ManagementEnforcer):
     def get_permissions_for_user_in_domain(self, user, domain):
         """gets permissions for a user or role inside domain."""
         return self.get_filtered_policy(0, user, domain)
+
+    def add_domain_group(self, *params):
+
+        policy = []
+
+        for param in params:
+            policy.append(param)
+
+        self._add_policy('d', 'd', policy)
+
+        if self.auto_build_role_links:
+            self.build_role_links()
+
+    def remove_domain_group(self, *params):
+
+        policy = []
+
+        for param in params:
+            policy.append(param)
+
+        self._remove_policy('d', 'd', policy)
+        if self.auto_build_role_links:
+            self.build_role_links()

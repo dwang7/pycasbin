@@ -2,6 +2,10 @@ import casbin
 import os
 from unittest import TestCase
 import time
+from casbin import log
+
+log.get_logger().enable_log(True)
+
 
 def get_examples(path):
     examples_path = os.path.split(os.path.realpath(__file__))[0] + "/../examples/"
@@ -203,7 +207,7 @@ class TestConfig(TestCaseBase):
         sub1 = TestSub("alice", 16)
         sub2 = TestSub("bob", 20)
         sub3 = TestSub("alice", 65)
-        
+
         self.assertFalse(e.enforce(sub1, "/data1", "read"))
         self.assertFalse(e.enforce(sub1, "/data2", "read"))
         self.assertFalse(e.enforce(sub1, "/data1", "write"))
@@ -227,7 +231,7 @@ class TestConfig(TestCaseBase):
         sub2 = TestSub("alice", 20)
         sub3 = TestSub("bob", 65)
         sub4 = TestSub("bob", 35)
-        
+
         self.assertFalse(e.enforce(sub1, "/data1", "read"))
         self.assertFalse(e.enforce(sub1, "/data2", "read"))
         self.assertFalse(e.enforce(sub1, "/data1", "write"))
@@ -247,6 +251,31 @@ class TestConfig(TestCaseBase):
         self.assertFalse(e.enforce(sub4, "/data2", "read"))
         self.assertFalse(e.enforce(sub4, "/data1", "write"))
         self.assertTrue(e.enforce(sub4, "/data2", "write"))
+
+    def test_rbac_with_domain_groups(self):
+
+        e = self.get_enforcer(get_examples("rbac_with_domain_groups_model.conf"),
+                              get_examples("rbac_with_domain_groups_policy.csv"),
+                              True
+                              )
+
+        self.assertTrue(e.enforce('alice', 'netflix', 'data1', 'read'))
+        self.assertTrue(e.enforce('alice', 'apple', 'data1', 'write'))
+
+        self.assertFalse(e.enforce('bob', '7up', 'data1', 'read'))
+
+        e.add_domain_group('7up', 'beverages')
+
+        self.assertTrue(e.enforce('bob', '7up', 'data1', 'read'))
+
+        e.save_policy()
+
+        e.remove_domain_group('7up', 'beverages')
+
+        self.assertFalse(e.enforce('bob', '7up', 'data1', 'read'))
+
+        e.save_policy()
+
 
 class TestConfigSynced(TestConfig):
 
@@ -270,4 +299,4 @@ class TestConfigSynced(TestConfig):
         #thread needs a moment to exit
         time.sleep(10/1000)
         self.assertFalse(e.is_auto_loading_running())
-        
+

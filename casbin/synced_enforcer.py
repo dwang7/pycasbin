@@ -13,7 +13,7 @@ class AtomicBool():
     def value(self):
         with self._lock:
             return self._value
-    
+
     @value.setter
     def value(self, value):
         with self._lock:
@@ -21,7 +21,7 @@ class AtomicBool():
 
 class SyncedEnforcer(Enforcer):
 
-    """SyncedEnforcer wraps Enforcer and provides synchronized access. 
+    """SyncedEnforcer wraps Enforcer and provides synchronized access.
     It's also a drop-in replacement for Enforcer"""
 
     def __init__(self, model=None, adapter=None, enable_log=False):
@@ -47,7 +47,7 @@ class SyncedEnforcer(Enforcer):
             return
         self._auto_loading.value = True
         self._auto_loading_thread = threading.Thread(target=self._auto_load_policy, args=[interval], daemon=True)
-        
+
     def stop_auto_load_policy(self):
         """stops the thread started by start_auto_load_policy"""
         if self.is_auto_loading_running():
@@ -139,7 +139,7 @@ class SyncedEnforcer(Enforcer):
         """gets the list of subjects that show up in the current policy."""
         with self._rl:
             return self._e.get_all_subjects()
-    
+
     def get_all_named_subjects(self, ptype):
         """gets the list of subjects that show up in the current named policy."""
         with self._rl:
@@ -506,3 +506,28 @@ class SyncedEnforcer(Enforcer):
         """returns true if the loaded policy has been filtered."""
         with self._rl:
             self._e.is_filtered()
+
+    def add_domain_group(self, *params):
+
+        policy = []
+
+        with self._wl:
+            for param in params:
+                policy.append(param)
+
+            self._e._add_policy('d', 'd', policy)
+
+            if self._e.auto_build_role_links:
+                self._e.build_role_links()
+
+    def remove_domain_group(self, *params):
+
+        policy = []
+
+        with self._wl:
+            for param in params:
+                policy.append(param)
+
+            self._e._remove_policy('d', 'd', policy)
+            if self._e.auto_build_role_links:
+                self._e.build_role_links()

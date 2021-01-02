@@ -7,11 +7,16 @@ class RoleManager(RoleManager):
 
     all_roles = dict()
     max_hierarchy_level = 0
+    domain_groups = []
 
     def __init__(self, max_hierarchy_level):
         self.all_roles = dict()
         self.max_hierarchy_level = max_hierarchy_level
         self.matching_func = None
+
+    def add_domain_groups(self, domain_groups):
+        self.domain_groups = domain_groups
+        log.log_print("[dwang] domain groups: {}".format(self.domain_groups))
 
     def add_matching_func(self, fn):
         self.matching_func = fn

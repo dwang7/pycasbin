@@ -18,7 +18,7 @@ class Policy:
         """prints the policy to log."""
 
         log.log_print("Policy:")
-        for sec in ["p", "g"]:
+        for sec in ["p", "g", "d"]:
             if sec not in self.model.keys():
                 continue
 

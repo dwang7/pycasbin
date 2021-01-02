@@ -1,5 +1,6 @@
-from casbin import persist
+from casbin import persist, log
 import os
+
 
 class FileAdapter(persist.Adapter):
     """the file adapter for Casbin.
@@ -23,6 +24,7 @@ class FileAdapter(persist.Adapter):
         self._save_policy_file(model)
 
     def _load_policy_file(self, model):
+        log.log_print("********* _load_policy_file **********")
         with open(self._file_path, "rb") as file:
             line = file.readline()
             while line:
@@ -30,6 +32,8 @@ class FileAdapter(persist.Adapter):
                 line = file.readline()
 
     def _save_policy_file(self, model):
+
+        log.log_print("********* _save_policy_file {} **********".format(model))
         with open(self._file_path, "w") as file:
             lines = []
 
@@ -40,6 +44,11 @@ class FileAdapter(persist.Adapter):
 
             if "g" in model.model.keys():
                 for key, ast in model.model["g"].items():
+                    for pvals in ast.policy:
+                        lines.append(key + ", " + ", ".join(pvals))
+
+            if "d" in model.model.keys():
+                for key, ast in model.model["d"].items():
                     for pvals in ast.policy:
                         lines.append(key + ", " + ", ".join(pvals))
 

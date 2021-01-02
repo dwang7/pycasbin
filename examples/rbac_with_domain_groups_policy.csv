@@ -1,0 +1,16 @@
+p, read_role, data1, read
+p, read_role, data2, read
+p, admin_role, *, *
+p, write_role, data1, write
+p, write_role, data2, write
+g, bob, read_role, beverages
+g, bob, admin_role, sprite
+g, alice, write_role, fang
+g, alice, read_role, netflix
+d, pepsi, beverages
+d, coke, beverages
+d, sprite, beverages
+d, facebook, fang
+d, apple, fang
+d, netflix, fang
+d, google, fang

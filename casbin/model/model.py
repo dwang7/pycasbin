@@ -11,6 +11,7 @@ class Model(Policy):
         'g': 'role_definition',
         'e': 'policy_effect',
         'm': 'matchers',
+        'd': 'domain_groups'
     }
 
     def _load_assertion(self, cfg, sec, key):
@@ -63,6 +64,7 @@ class Model(Policy):
         self._load_section(cfg, "m")
 
         self._load_section(cfg, "g")
+        self._load_section(cfg, "d")
 
     def load_model_from_text(self, text):
         cfg = config.Config.new_config_from_text(text)
@@ -73,6 +75,7 @@ class Model(Policy):
         self._load_section(cfg, "m")
 
         self._load_section(cfg, "g")
+        self._load_section(cfg, "d")
 
     def print_model(self):
         log.log_print("Model:")
